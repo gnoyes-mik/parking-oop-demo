@@ -5,6 +5,12 @@ import domain.parkingLot.dto.CarParkingInfo;
 import domain.parkingLot.dto.ParkingReceipt;
 
 public interface ParkingLot {
+
+    /**
+     * 주차된 차량을 조회한다
+     */
+    CarParkingInfo find(Car car);
+
     /**
      * 주차장으로 차량이 진입한다
      */

@@ -21,8 +21,6 @@ public class StandardParkingLot implements ParkingLot {
     private ParkingCostPolicy costPolicy;
     private final int MAX_FLOOR;
     private final int MAX_NO;
-    private final int MIN_FLOOR = 1;
-    private final int MIN_NO = 1;
     private final String PARKING_LOT_NAME = "STANDARD_PARK";
 
     public StandardParkingLot(int floor, int no, ParkingCostPolicy costPolicy) {
@@ -65,6 +63,30 @@ public class StandardParkingLot implements ParkingLot {
     }
 
     @Override
+    public CarParkingInfo find(Car car) {
+        validateParam(car);
+        return findByCarNum(car.getCarNum());
+    }
+
+    private CarParkingInfo findByCarNum(String carNum) {
+        for (ParkingBox[] eachFloor : parkingLot) {
+            for (ParkingBox parkingBox : eachFloor) {
+                if (Objects.isNull(parkingBox)) {
+                    continue;
+                }
+                if (Objects.isNull(parkingBox.getInfo())) {
+                    continue;
+                }
+                Car car = parkingBox.getInfo().getCar();
+                if (carNum.equals(car.getCarNum())) {
+                    return parkingBox.getInfo();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public CarParkingInfo enter(Car car) {
         validateParam(car);
         CarParkingInfo carParkingInfo = new CarParkingInfo(PARKING_LOT_NAME, car);
@@ -75,8 +97,14 @@ public class StandardParkingLot implements ParkingLot {
     @Override
     public CarParkingInfo leave(Car car) {
         validateParam(car);
+        CarParkingInfo parkedCarInfo = findByCarNum(car.getCarNum());
 
-        return new CarParkingInfo();
+        if (Objects.isNull(parkedCarInfo)) {
+            throw new RuntimeException("차량이 존재하지 않습니다");
+        }
+
+        parkedCarInfo.recordLeaveTime();
+        return parkedCarInfo;
     }
 
     @Override
@@ -91,10 +119,9 @@ public class StandardParkingLot implements ParkingLot {
             throw new RuntimeException("차량이 이미 존재합니다");
         }
 
-        Car car = info.getCar();
-        parkingLot[floor][no].in(car);
+        parkingLot[floor][no].in(info);
 
-        log.info("차량 번호 [{}]가 {}층 {}번에 주차되었습니다", car.getCarNum(), info.getFloor(), info.getParkingBoxNo());
+        log.info("차량 번호 [{}]가 {}층 {}번에 주차되었습니다", info.getCar().getCarNum(), info.getFloor(), info.getParkingBoxNo());
     }
 
     @Override
@@ -129,6 +156,8 @@ public class StandardParkingLot implements ParkingLot {
             throw new RuntimeException("location 정보는 필수 입니다");
         }
 
+        int MIN_FLOOR = 1;
+        int MIN_NO = 1;
         int floor = info.getFloor();
         int no = info.getParkingBoxNo();
         if (floor < MIN_FLOOR || no < MIN_NO) {
@@ -147,8 +176,8 @@ public class StandardParkingLot implements ParkingLot {
         LocalDateTime enterTime = info.getEnterTime();
         LocalDateTime leaveTime = info.getLeaveTime();
         Duration duration = Duration.between(enterTime, leaveTime);
-        long min = duration.toMinutes();
-        long cost = min * costPolicy.getCostPer10min();
+
+        long cost = costPolicy.calculateCost(duration);
 
         log.info("[{}] 기간 : {} ~ {} / 비용 : {}(원)", info.getCar().getCarNum(), enterTime, leaveTime, cost);
         return new ParkingReceipt(cost);
