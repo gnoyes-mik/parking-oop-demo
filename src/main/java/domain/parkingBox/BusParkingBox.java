@@ -1,8 +1,8 @@
-package parkingBox;
+package domain.parkingBox;
 
-import car.Bus;
-import car.Car;
-import car.LightCar;
+import domain.car.Bus;
+import domain.car.Car;
+import domain.car.LightCar;
 
 public class BusParkingBox implements ParkingBox {
     private boolean carExist = false;

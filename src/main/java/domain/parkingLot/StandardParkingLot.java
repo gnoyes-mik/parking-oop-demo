@@ -1,11 +1,9 @@
-package parkingLot;
+package domain.parkingLot;
 
-import car.Car;
-import parkingBox.BusParkingBox;
-import parkingBox.GeneralCarParkingBox;
-import parkingBox.ParkingBox;
-
-import java.util.logging.Logger;
+import domain.car.Car;
+import domain.parkingBox.BusParkingBox;
+import domain.parkingBox.GeneralCarParkingBox;
+import domain.parkingBox.ParkingBox;
 
 public class StandardParkingLot implements ParkingLot {
 

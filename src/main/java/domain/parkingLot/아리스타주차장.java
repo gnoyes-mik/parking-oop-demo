@@ -1,6 +1,6 @@
-package parkingLot;
+package domain.parkingLot;
 
-import car.Car;
+import domain.car.Car;
 
 public class 아리스타주차장 implements ParkingLot {
     @Override

@@ -1,8 +1,8 @@
-package parkingBox;
+package domain.parkingBox;
 
-import car.Car;
-import car.GeneralCar;
-import car.LightCar;
+import domain.car.Car;
+import domain.car.GeneralCar;
+import domain.car.LightCar;
 
 public class GeneralCarParkingBox implements ParkingBox {
 

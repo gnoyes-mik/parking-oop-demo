@@ -1,6 +1,6 @@
-package parkingBox;
+package domain.parkingBox;
 
-import car.Car;
+import domain.car.Car;
 
 public interface ParkingBox {
     void in(Car car);

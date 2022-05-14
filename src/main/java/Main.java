@@ -1,8 +1,8 @@
-import car.Bus;
-import car.Car;
-import car.LightCar;
-import parkingLot.ParkingLot;
-import parkingLot.StandardParkingLot;
+import domain.car.Bus;
+import domain.car.Car;
+import domain.car.LightCar;
+import domain.parkingLot.ParkingLot;
+import domain.parkingLot.StandardParkingLot;
 
 public class Main {
 

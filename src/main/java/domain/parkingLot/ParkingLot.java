@@ -1,6 +1,6 @@
-package parkingLot;
+package domain.parkingLot;
 
-import car.Car;
+import domain.car.Car;
 
 public interface ParkingLot {
     void park(int floor, int no, Car car);

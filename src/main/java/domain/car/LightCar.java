@@ -1,9 +1,9 @@
-package car;
+package domain.car;
 
-public class GeneralCar implements Car {
+public class LightCar implements Car {
     private final String carNum;
 
-    public GeneralCar(String carNum) {
+    public LightCar(String carNum) {
         this.carNum = carNum;
     }
 

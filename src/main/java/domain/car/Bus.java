@@ -1,4 +1,4 @@
-package car;
+package domain.car;
 
 public class Bus implements Car {
     private final String carNum;
