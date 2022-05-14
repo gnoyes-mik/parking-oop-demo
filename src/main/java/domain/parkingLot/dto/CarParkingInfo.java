@@ -23,6 +23,15 @@ public class CarParkingInfo {
     public CarParkingInfo() {
     }
 
+    // for Test
+    CarParkingInfo(String parkingLotName, Location location, Car car, LocalDateTime enterTime, LocalDateTime leaveTime) {
+        this.parkingLotName = parkingLotName;
+        this.location = location;
+        this.car = car;
+        this.enterTime = enterTime;
+        this.leaveTime = leaveTime;
+    }
+
     public CarParkingInfo(String parkingLotName, Car car) {
         this.parkingLotName = parkingLotName;
         this.car = car;
@@ -41,7 +50,7 @@ public class CarParkingInfo {
     }
 
     public void setLocation(int floor, int no) {
-        this.location = new Location(floor, no);
+        this.location = Location.of(floor, no);
     }
 
     public int getFloor() {
