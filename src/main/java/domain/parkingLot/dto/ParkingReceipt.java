@@ -6,4 +6,8 @@ public class ParkingReceipt {
     public ParkingReceipt(long cost) {
         this.cost = cost;
     }
+
+    public long getCost() {
+        return cost;
+    }
 }
