@@ -7,6 +7,10 @@ public class Location {
     public Location() {
     }
 
+    public static Location of(int floor, int no) {
+        return new Location(floor, no);
+    }
+
     public Location(int floor, int no) {
         this.floor = floor;
         this.no = no;
