@@ -1,4 +1,4 @@
-package domain.parkingLot.policy;
+package domain.policy;
 
 import java.time.Duration;
 

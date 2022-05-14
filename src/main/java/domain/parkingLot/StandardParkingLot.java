@@ -7,7 +7,7 @@ import domain.parkingBox.LightCarParingBox;
 import domain.parkingBox.ParkingBox;
 import domain.parkingLot.dto.CarParkingInfo;
 import domain.parkingLot.dto.ParkingReceipt;
-import domain.parkingLot.policy.ParkingCostPolicy;
+import domain.policy.ParkingCostPolicy;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
