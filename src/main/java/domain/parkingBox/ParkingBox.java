@@ -1,11 +1,13 @@
 package domain.parkingBox;
 
-import domain.car.Car;
+import domain.parkingLot.dto.CarParkingInfo;
 
 public interface ParkingBox {
-    void in(Car car);
+    void in(CarParkingInfo carParkingInfo);
 
     void out();
 
     boolean status();
+
+    CarParkingInfo getInfo();
 }
