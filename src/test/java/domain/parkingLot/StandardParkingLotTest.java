@@ -5,14 +5,22 @@ import domain.car.Car;
 import domain.car.GeneralCar;
 import domain.car.LightCar;
 import domain.parkingLot.dto.CarParkingInfo;
+import domain.parkingLot.dto.CarParkingInfoBuilder;
+import domain.parkingLot.dto.ParkingReceipt;
 import domain.parkingLot.policy.ParkingCostPolicy;
 import domain.parkingLot.policy.StandardPolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
+import utils.Location;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StandardParkingLotTest {
 
     private ParkingLot parkingLot;
@@ -30,10 +38,21 @@ class StandardParkingLotTest {
         bus = new Bus("100버 1000");
         generalCar = new GeneralCar("200일 2000");
         lightCar = new LightCar("300경 3000");
+
+        /**
+         * [100경 9901]-(10F,8) / [200경 9902]-(10F,16) / [300경 9903]-(10F,24)
+         */
+        for (int i = 1; i <= 3; i++) {
+            CarParkingInfo carParkingInfo = new CarParkingInfo("ForTest", new LightCar(i + "00경 990" + i));
+            carParkingInfo.setLocation(10, i * 8);
+            parkingLot.park(carParkingInfo);
+        }
     }
 
-    @DisplayName("StandardParkingLot을 생성한다")
+
     @Test
+    @Order(1)
+    @DisplayName("StandardParkingLot을 생성한다")
     void createParkingLot() {
         // given
         int floor = 10;
@@ -47,8 +66,9 @@ class StandardParkingLotTest {
         assertNotNull(standardParkingLot);
     }
 
-    @DisplayName("주차장 만들 때 잘못된 층,칸,정책이 주어진 경우에 에러를 발생시킨다")
     @Test
+    @Order(2)
+    @DisplayName("주차장 만들 때 잘못된 층,칸,정책이 주어진 경우에 에러를 발생시킨다")
     void wrongFloorOrNo() {
         // given
         int wrongFloor = 0;
@@ -64,8 +84,9 @@ class StandardParkingLotTest {
         assertThrows(IllegalArgumentException.class, () -> new StandardParkingLot(floor, no, wrongPolicy));
     }
 
-    @DisplayName("차량이 진입했을 때 차량의 정보를 잘 저장한다")
     @Test
+    @DisplayName("차량이 진입했을 때 차량의 정보를 잘 저장한다")
+    @Order(3)
     void enterTheCar() {
         // when
         CarParkingInfo enterBus = parkingLot.enter(bus);
@@ -92,8 +113,9 @@ class StandardParkingLotTest {
         log.info("enterTime = {}", enterBus.getEnterTime());
     }
 
-    @DisplayName("차량 이름 정보가 잘못된 차량이 진입했을 때 에러를 발생시킨다")
     @Test
+    @Order(4)
+    @DisplayName("차량 이름 정보가 잘못된 차량이 진입했을 때 에러를 발생시킨다")
     void enterWrongCar() {
         // given
         // TODO: Car 의 테스트로 이동
@@ -106,8 +128,9 @@ class StandardParkingLotTest {
         assertThrows(IllegalArgumentException.class, () -> parkingLot.enter(emptyNameCar));
     }
 
-    @DisplayName("주차칸에 차량이 주차한다")
     @Test
+    @Order(5)
+    @DisplayName("주차칸에 차량이 주차한다")
     void park() {
         // given
         /**
@@ -133,8 +156,9 @@ class StandardParkingLotTest {
         parkingLot.show();
     }
 
-    @DisplayName("전용 칸에 주차 하지 않은 경우 에러를 발생시킨다")
     @Test
+    @Order(6)
+    @DisplayName("전용 칸에 주차 하지 않은 경우 에러를 발생시킨다")
     void diffTypeCarPark() {
         // given
         /**
@@ -158,8 +182,9 @@ class StandardParkingLotTest {
         assertThrows(RuntimeException.class, () -> parkingLot.park(ligInBusZone));
     }
 
-    @DisplayName("단, 경차는 일반차 전용칸에 주차를 할 수 있다")
     @Test
+    @Order(7)
+    @DisplayName("단, 경차는 일반차 전용칸에 주차를 할 수 있다")
     void lightCarParkInGeneralZone() {
         // given
         CarParkingInfo ligInGeneralZone = parkingLot.enter(lightCar);
@@ -172,8 +197,9 @@ class StandardParkingLotTest {
         parkingLot.show();
     }
 
-    @DisplayName("주차칸에 이미 차량이 있는 경우 에러를 발생시킨다")
     @Test
+    @Order(8)
+    @DisplayName("주차칸에 이미 차량이 있는 경우 에러를 발생시킨다")
     void alreadyExistCarInParkingBox() {
         // given
         CarParkingInfo busFirst = parkingLot.enter(bus);
@@ -202,8 +228,9 @@ class StandardParkingLotTest {
         assertThrows(RuntimeException.class, () -> parkingLot.park(ligSecond));
     }
 
-    @DisplayName("주차칸에서 차량이 출차 한다")
     @Test
+    @Order(9)
+    @DisplayName("주차칸에서 차량이 출차 한다")
     void moveOut() {
         // given
         CarParkingInfo car = parkingLot.enter(generalCar);
@@ -218,8 +245,9 @@ class StandardParkingLotTest {
         parkingLot.show();
     }
 
-    @DisplayName("중복 출차 시(차량 출차 시 주차칸에 차량이 없는 경우) 에러를 발생 시킨다")
     @Test
+    @Order(10)
+    @DisplayName("중복 출차 시(차량 출차 시 주차칸에 차량이 없는 경우) 에러를 발생 시킨다")
     void doubleMoveOut() {
         // given
         CarParkingInfo car = parkingLot.enter(generalCar);
@@ -230,7 +258,79 @@ class StandardParkingLotTest {
         assertThrows(RuntimeException.class, () -> parkingLot.moveOut(car));
     }
 
+    @Test
+    @Order(11)
+    @DisplayName("주차된 차량을 조회한다")
+    void find() {
+        // given
+        /**
+         * [100경 9901]-(10F,8) / [200경 9902]-(10F,16) / [300경 9903]-(10F,24)
+         */
+        LightCar lightCar = new LightCar("100경 9901");
+        parkingLot.show();
+
+        // when
+        CarParkingInfo carParkingInfo = parkingLot.find(lightCar);
+
+        // then
+        assertNotNull(carParkingInfo);
+        assertEquals("100경 9901", carParkingInfo.getCar().getCarNum());
+        assertEquals(10, carParkingInfo.getFloor());
+        assertEquals(8, carParkingInfo.getParkingBoxNo());
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("조회되는 차량이 없는 경우 null을 반환한다")
+    void findButNotExist() {
+        // given
+        /**
+         * [100경 9901]-(10F,8) / [200경 9902]-(10F,16) / [300경 9903]-(10F,24)
+         */
+        LightCar notExistCar = new LightCar("999경 1234");
+
+        // when
+        CarParkingInfo carParkingInfo = parkingLot.find(lightCar);
+
+        // then
+        assertNull(carParkingInfo);
+    }
+
+    @Test
+    @Order(13)
+    @DisplayName("차량이 주차장을 나가려고 할 때 차량을 조회하여 나가는 시간을 기록한다")
+    void leave() {
+        // given
+        LightCar lightCar = new LightCar("100경 9901");
+
+        // when
+        CarParkingInfo leftCar = parkingLot.leave(lightCar);
+
+        // then
+        assertNotNull(leftCar);
+        assertNotNull(leftCar.getLeaveTime());
+        System.out.println("leftCar.getCar().getCarNum() = " + leftCar.getCar().getCarNum());
+        System.out.println("leftCar.getLeaveTime() = " + leftCar.getLeaveTime());
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("주차 요금을 계산한다")
     void calculate() {
-        
+        // given
+        /**
+         * policy : 10분에 500원
+         */
+        LightCar lightCar = new LightCar("400경 9904");
+        LocalDateTime enterTime = LocalDateTime.of(LocalDate.of(2022, 5, 15), LocalTime.of(13, 0));
+        LocalDateTime leaveTime = LocalDateTime.of(LocalDate.of(2022, 5, 15), LocalTime.of(15, 24));
+        CarParkingInfo parking120Min = CarParkingInfoBuilder.of("ForTest", Location.of(1, 1), lightCar, enterTime, leaveTime);
+
+        // when
+        ParkingReceipt receipt = parkingLot.calculate(parking120Min);
+
+        // then
+        assertNotNull(receipt);
+        assertEquals(7200, receipt.getCost());
     }
 }
