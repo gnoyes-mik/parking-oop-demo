@@ -4,8 +4,10 @@ import domain.car.Bus;
 import domain.car.Car;
 import domain.car.GeneralCar;
 import domain.car.LightCar;
+import domain.parkingBox.map.StandardMap;
 import domain.parkingLot.dto.CarParkingInfo;
 import domain.parkingLot.dto.CarParkingInfoBuilder;
+import domain.parkingLot.dto.ParkingLotMapInfo;
 import domain.parkingLot.dto.ParkingReceipt;
 import domain.policy.ParkingCostPolicy;
 import domain.policy.StandardPolicy;
@@ -33,7 +35,8 @@ class StandardParkingLotTest {
         int floor = 10;
         int no = 100;
         ParkingCostPolicy policy = new StandardPolicy(500);
-        parkingLot = new StandardParkingLot(floor, no, policy);
+        ParkingLotMapInfo map = new ParkingLotMapInfo(floor, no, new StandardMap());
+        parkingLot = new StandardParkingLot(map, policy);
 
         bus = new Bus("100버 1000");
         generalCar = new GeneralCar("200일 2000");
@@ -58,9 +61,10 @@ class StandardParkingLotTest {
         int floor = 10;
         int no = 100;
         ParkingCostPolicy policy = new StandardPolicy(500);
+        ParkingLotMapInfo map = new ParkingLotMapInfo(floor, no, new StandardMap());
 
         // when
-        ParkingLot standardParkingLot = new StandardParkingLot(floor, no, policy);
+        ParkingLot standardParkingLot = new StandardParkingLot(map, policy);
 
         // then
         assertNotNull(standardParkingLot);
@@ -75,13 +79,16 @@ class StandardParkingLotTest {
         int no = 100;
         int floor = 10;
         int wrongNo = -10;
+        ParkingLotMapInfo mapWrongFloor = new ParkingLotMapInfo(wrongFloor, no, new StandardMap());
+        ParkingLotMapInfo mapWrongNo = new ParkingLotMapInfo(floor, wrongNo, new StandardMap());
+        ParkingLotMapInfo map = new ParkingLotMapInfo(floor, no, new StandardMap());
         ParkingCostPolicy policy = new StandardPolicy(500);
         ParkingCostPolicy wrongPolicy = null;
 
         // when
-        assertThrows(IllegalArgumentException.class, () -> new StandardParkingLot(wrongFloor, no, policy));
-        assertThrows(IllegalArgumentException.class, () -> new StandardParkingLot(floor, wrongNo, policy));
-        assertThrows(IllegalArgumentException.class, () -> new StandardParkingLot(floor, no, wrongPolicy));
+        assertThrows(IllegalArgumentException.class, () -> new StandardParkingLot(mapWrongFloor, policy));
+        assertThrows(IllegalArgumentException.class, () -> new StandardParkingLot(mapWrongNo, policy));
+        assertThrows(IllegalArgumentException.class, () -> new StandardParkingLot(map, wrongPolicy));
     }
 
     @Test
