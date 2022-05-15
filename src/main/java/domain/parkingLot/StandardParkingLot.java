@@ -1,11 +1,10 @@
 package domain.parkingLot;
 
 import domain.car.Car;
-import domain.parkingBox.BusParkingBox;
-import domain.parkingBox.GeneralCarParkingBox;
-import domain.parkingBox.LightCarParingBox;
 import domain.parkingBox.ParkingBox;
+import domain.parkingBox.map.MapStrategy;
 import domain.parkingLot.dto.CarParkingInfo;
+import domain.parkingLot.dto.ParkingLotMapInfo;
 import domain.parkingLot.dto.ParkingReceipt;
 import domain.policy.ParkingCostPolicy;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +22,12 @@ public class StandardParkingLot implements ParkingLot {
     private final int MAX_NO;
     private final String PARKING_LOT_NAME = "STANDARD_PARK";
 
-    public StandardParkingLot(int floor, int no, ParkingCostPolicy costPolicy) {
-        validateConstructInfo(floor, no, costPolicy);
+    public StandardParkingLot(ParkingLotMapInfo mapInfo, ParkingCostPolicy costPolicy) {
+        validateConstructInfo(mapInfo.getFloor(), mapInfo.getNo(), costPolicy);
 
-        this.parkingLot = generateParkingBoxes(floor, no);
-        this.MAX_FLOOR = floor;
-        this.MAX_NO = no;
+        this.parkingLot = generateParkingBoxes(mapInfo);
+        this.MAX_FLOOR = mapInfo.getFloor();
+        this.MAX_NO = mapInfo.getNo();
         this.costPolicy = costPolicy;
     }
 
@@ -44,22 +43,9 @@ public class StandardParkingLot implements ParkingLot {
         }
     }
 
-    private ParkingBox[][] generateParkingBoxes(int floor, int no) {
-        parkingLot = new ParkingBox[floor + 1][no + 1];
-        for (int f = 1; f <= floor; f++) {
-            for (int n = 1; n <= no; n++) {
-                if (n == no) {
-                    parkingLot[f][n] = new BusParkingBox();
-                    continue;
-                }
-                if (n % 2 == 0) {
-                    parkingLot[f][n] = new GeneralCarParkingBox();
-                    continue;
-                }
-                parkingLot[f][n] = new LightCarParingBox();
-            }
-        }
-        return parkingLot;
+    private ParkingBox[][] generateParkingBoxes(ParkingLotMapInfo mapInfo) {
+        MapStrategy strategy = mapInfo.getStrategy();
+        return strategy.createMap(mapInfo.getFloor(), mapInfo.getNo());
     }
 
     @Override
